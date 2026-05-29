@@ -66,11 +66,13 @@ const VARIANTS: (ProductVariant & { limitedStock?: boolean; accentClass?: string
 
 // 5 reviews: 3 are 5-star, 2 are 4-star, no text, no image
 const REVIEWS = [
-  { stars: 5 },
-  { stars: 5 },
-  { stars: 4 },
-  { stars: 5 },
-  { stars: 4 },
+  { name: "Rowan", stars: 5, text: "Super fast shipping, arrived in 2 days!", avatar: "https://i.pravatar.cc/100?img=1" },
+  { name: "James", stars: 5, text: "Great price for the quality.", avatar: "https://i.pravatar.cc/100?img=12" },
+  { name: "jake", stars: 4, text: "Customer support was really helpful.", avatar: "https://i.pravatar.cc/100?img=5" },
+  { name: "Liam", stars: 5, text: "Easy ordering process, no fuss.", avatar: "https://i.pravatar.cc/100?img=33" },
+  { name: "casper", stars: 4, text: "Packaging was solid, no damage.", avatar: "https://i.pravatar.cc/100?img=9" },
+  { name: "Noah", stars: 5, text: "Best buy this year, recommended!", avatar: "https://i.pravatar.cc/100?img=15" },
+  { name: "max", stars: 4, text: "Smooth delivery experience.", avatar: "https://i.pravatar.cc/100?img=20" },
 ];
 
 const FAQ = [
