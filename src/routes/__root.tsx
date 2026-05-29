@@ -1,15 +1,12 @@
+@'
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
   Link,
   createRootRouteWithContext,
   useRouter,
-  HeadContent,
-  Scripts,
 } from "@tanstack/react-router";
 
-import appCss from "../styles.css?url";
-import favicon from "@/assets/favicon.png";
 import { CartProvider } from "@/context/cart";
 import { CurrencyProvider } from "@/context/currency";
 import { CartDrawer } from "@/components/cart-drawer";
@@ -73,57 +70,10 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
 }
 
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Raw Ebikes" },
-      { name: "description", content: "RAW ebikes is a modern, black and white ebike storefront with a Sleek Sakura theme." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Raw Ebikes" },
-      { property: "og:description", content: "RAW ebikes is a modern, black and white ebike storefront with a Sleek Sakura theme." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Raw Ebikes" },
-      { name: "twitter:description", content: "RAW ebikes is a modern, black and white ebike storefront with a Sleek Sakura theme." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/755e8ef1-c0ba-4ef5-bb3d-ac5a30364186/id-preview-b435bad7--f7164980-f74a-4c11-98aa-ad24e4b8b17e.lovable.app-1780035742814.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/755e8ef1-c0ba-4ef5-bb3d-ac5a30364186/id-preview-b435bad7--f7164980-f74a-4c11-98aa-ad24e4b8b17e.lovable.app-1780035742814.png" },
-    ],
-    links: [
-      { rel: "icon", type: "image/png", href: favicon },
-      { rel: "apple-touch-icon", href: favicon },
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-      { rel: "preconnect", href: "https://fonts.googleapis.com" },
-      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
-      {
-        rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap",
-      },
-    ],
-  }),
-  shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
-
-function RootShell({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <head>
-        <HeadContent />
-      </head>
-      <body>
-        {children}
-        <Scripts />
-      </body>
-    </html>
-  );
-}
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
@@ -132,7 +82,6 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <CurrencyProvider>
         <CartProvider>
-          {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
           <Outlet />
           <CartDrawer />
         </CartProvider>
@@ -140,4 +89,4 @@ function RootComponent() {
     </QueryClientProvider>
   );
 }
-
+'@ | Set-Content -Path src\routes\__root.tsx -Encoding UTF8
