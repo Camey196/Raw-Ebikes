@@ -331,7 +331,7 @@ function StarRow({ count }: { count: number }) {
         <Star
           key={n}
           className={cn(
-            "h-6 w-6",
+            "h-4 w-4",
             n <= count ? "fill-yellow-400 text-yellow-400" : "fill-none text-muted-foreground/40",
           )}
         />
@@ -339,7 +339,6 @@ function StarRow({ count }: { count: number }) {
     </div>
   );
 }
-
 function Reviews() {
   // Duplicate the list so the marquee scrolls seamlessly
   const loop = [...REVIEWS, ...REVIEWS, ...REVIEWS];
