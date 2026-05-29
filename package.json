@@ -4,12 +4,11 @@
   "sideEffects": false,
   "type": "module",
   "scripts": {
-    "dev": "npx vite",
-    "build": "npx vite build",
-    "preview": "npx vite preview",
-    "lint": "eslint .",
-    "format": "prettier --write ."
-  },
+  "dev": "vite",
+  "build": "vite build",
+  "preview": "vite preview",
+  "postinstall": "node -e \"try{require('fs').chmodSync('node_modules/.bin/vite',0o755)}catch(e){}\""
+},
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
