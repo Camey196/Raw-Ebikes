@@ -1,0 +1,15 @@
+[33m8deca373[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Convert to static SPA
+[33mbb28a72f[m Fix worker copy
+[33m2c778470[m Copy server assets + worker to client for Pages
+[33m971abefc[m Copy server assets to client for Pages worker
+[33m03df9325[m Copy worker to dist/client for Pages
+[33m765af72d[m Build succeeded
+[33m7f010f85[m Add Railway config for Node SSR
+[33mf7d66572[m Remove base + add Railway start command
+[33m0f2d7113[m Fix double comma in package.json
+[33m15367bdd[m Run vite via node to bypass permission issue
+[33m1e08aac9[m Truly regenerate lockfile with all deps
+[33mc8237563[m Move build tools to dependencies
+[33mfc4ac56f[m Fully regenerate package-lock.json
+[33m33b9b19d[m Resolve merge conflict - keep working package.json
+[33m23e0e69e[m Fix postinstall to be cross-platform
