@@ -7,8 +7,8 @@
   "dev": "vite",
   "build": "vite build",
   "preview": "vite preview",
-  "postinstall": "chmod +x node_modules/.bin/vite || true",
-  },
+  "postinstall": "chmod +x node_modules/.bin/vite || true"
+},
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
     "@radix-ui/react-accordion": "^1.2.12",
