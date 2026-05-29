@@ -358,14 +358,26 @@ function Reviews() {
           <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-background to-transparent" />
 
           <div className="flex w-max animate-marquee gap-8">
-            {loop.map((r, i) => (
-              <div
-                key={i}
-                className="flex h-32 w-72 shrink-0 items-center justify-center rounded-xl border border-border bg-background/50"
-              >
-                <StarRow count={r.stars} />
-              </div>
-            ))}
+           {loop.map((r, i) => (
+  <div
+    key={i}
+    className="flex h-40 w-80 shrink-0 flex-col justify-between rounded-xl border border-border bg-background/50 p-5"
+  >
+    <div className="flex items-center gap-3">
+      <img
+        src={r.avatar}
+        alt={r.name}
+        className="h-10 w-10 rounded-full object-cover"
+        loading="lazy"
+      />
+      <div>
+        <p className="font-serif text-sm font-medium">{r.name}</p>
+        <StarRow count={r.stars} />
+      </div>
+    </div>
+    <p className="text-sm leading-snug text-muted-foreground">"{r.text}"</p>
+  </div>
+))}
           </div>
         </div>
       </div>
