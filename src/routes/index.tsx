@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useReveal } from "@/hooks/use-reveal";
 import { Petals } from "@/components/petals";
-import { Instagram, Twitter, Youtube, Mail, Plus, Minus, ArrowRight, ShoppingBag } from "lucide-react";
+import { Instagram, Twitter, Youtube, Mail, Plus, Minus, ArrowRight, ShoppingBag, Star } from "lucide-react";
 import { useState } from "react";
 import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
@@ -33,7 +33,7 @@ const VARIANTS: (ProductVariant & { limitedStock?: boolean; accentClass?: string
   {
     id: "raw-noir",
     name: "Baja Light + Battery pack + horn",
-    variant: "Noir Edition",
+    variant: "Baja Light + Battery pack + horn",
     price: 59.99,
     image: product1,
     description:
@@ -49,7 +49,7 @@ const VARIANTS: (ProductVariant & { limitedStock?: boolean; accentClass?: string
   {
     id: "raw-bloom",
     name: "Baja Light + battery pack",
-    variant: "Bloom Edition",
+    variant: "Baja Light + battery pack",
     price: 49.99,
     image: product2,
     description:
@@ -64,10 +64,13 @@ const VARIANTS: (ProductVariant & { limitedStock?: boolean; accentClass?: string
   },
 ];
 
-const TESTIMONIALS = [
-  { quote: "Effortless quality. The Noir feels considered, nothing wasted.", name: "Eliot R.", role: "Designer, Berlin" },
-  { quote: "The Bloom turned my commute into the best part of the day.", name: "Mira S.", role: "Architect, Tokyo" },
-  { quote: "Sharp, restrained, built to last. The Petal is my favorite bike, period.", name: "Jonas K.", role: "Photographer, NYC" },
+// 5 reviews: 3 are 5-star, 2 are 4-star, no text, no image
+const REVIEWS = [
+  { stars: 5 },
+  { stars: 5 },
+  { stars: 4 },
+  { stars: 5 },
+  { stars: 4 },
 ];
 
 const FAQ = [
@@ -76,8 +79,8 @@ const FAQ = [
     a: "We ship worldwide from our studio in Antwerp. Shipping rates and delivery times depend on your region — see options in your bag at checkout.",
   },
   { q: "What is your return policy?", a: "Free 30-day returns on unridden bikes. We collect from your door." },
-  { q: "How are the editions different?", a: "Same frame, same drivetrain. The Noir and Bloom editions differ only in finish and hardware colorway." },
-  { q: "Do you restock sold-out editions?", a: "Noir is restocked monthly. Bloom is a limited run and may sell out for the season." },
+  { q: "How are the editions different?", a: "Same frame, same drivetrain. The editions differ in finish and hardware." },
+  { q: "Do you restock sold-out editions?", a: "We restock monthly when possible. Some runs are limited." },
 ];
 
 function smoothScrollTo(id: string) {
@@ -95,7 +98,7 @@ function Index() {
       <Hero />
       <ProductsStack onSelect={setModalProduct} />
       <BrandStory />
-      <Testimonials />
+      <Reviews />
       <Faq />
       <Footer />
       <ProductModal product={modalProduct} open={!!modalProduct} onClose={() => setModalProduct(null)} />
@@ -244,12 +247,12 @@ function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) 
                   type="button"
                   onClick={() => onSelect(p)}
                   className="img relative col-span-12 cursor-pointer text-left md:col-span-7 md:row-start-1"
-                  aria-label={`View ${p.variant}`}
+                  aria-label={`View ${p.name}`}
                 >
                   <div className="hover-sakura-glow relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted">
                     <img
                       src={p.image}
-                      alt={`${p.name} ${p.variant}`}
+                      alt={p.name}
                       loading="lazy"
                       width={1024}
                       height={1280}
@@ -262,15 +265,6 @@ function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) 
                         Limited Stock
                       </div>
                     )}
-                  </div>
-                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-4">
-                    <h3
-                      className={`font-display text-5xl font-black uppercase leading-none tracking-tight mix-blend-difference sm:text-7xl md:text-8xl lg:text-[7rem] text-center ${
-                        isYellow ? "text-yellow-400" : "text-background"
-                      }`}
-                    >
-                      {p.variant}
-                    </h3>
                   </div>
                 </button>
                 <div
@@ -285,7 +279,7 @@ function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) 
                   >
                     0{i + 1} / 02
                   </p>
-                  <p className="font-serif text-2xl">{p.variant}</p>
+                  <p className="font-display text-2xl font-bold uppercase tracking-tight">{p.name}</p>
                   <p
                     className={`font-mono text-4xl font-bold tabular-nums tracking-tight ${
                       isYellow ? "text-yellow-500" : "text-foreground"
@@ -323,35 +317,70 @@ function BrandStory() {
         <h2 className="reveal reveal-delay-1 mt-6 font-display text-4xl font-black uppercase leading-tight tracking-tight md:text-6xl">
           Built raw. Ride <span className="text-sakura">soft</span>.
         </h2>
-        <p className="reveal reveal-delay-2 mx-auto mt-8 max-w-2xl text-base leading-relaxed opacity-70 md:text-lg">
-          RAW EBIKES is an independent studio making electric bikes for the city
-          and the open road. Every frame is welded in small batches, every
-          component chosen to outlive the season. Hard edges. Soft landings.
-        </p>
       </div>
     </section>
   );
 }
 
-function Testimonials() {
+function StarRow({ count }: { count: number }) {
   return (
-    <section className="border-y border-border bg-background px-6 py-28 md:py-40 md:px-10">
+    <div className="flex items-center gap-1">
+      {[1, 2, 3, 4, 5].map((n) => (
+        <Star
+          key={n}
+          className={cn(
+            "h-6 w-6",
+            n <= count ? "fill-yellow-400 text-yellow-400" : "fill-none text-muted-foreground/40",
+          )}
+        />
+      ))}
+    </div>
+  );
+}
+
+function Reviews() {
+  // Duplicate the list so the marquee scrolls seamlessly
+  const loop = [...REVIEWS, ...REVIEWS, ...REVIEWS];
+
+  return (
+    <section className="border-y border-border bg-background px-6 py-28 md:py-40 md:px-10 overflow-hidden">
       <div className="mx-auto max-w-7xl">
-        <p className="reveal text-[10px] uppercase tracking-[0.3em] text-sakura">04 — Ridden By</p>
-        <h2 className="reveal reveal-delay-1 mt-4 font-display text-5xl font-black uppercase tracking-tight md:text-6xl">Notes from the street.</h2>
-        <div className="mt-20 grid grid-cols-1 gap-12 md:grid-cols-3 md:gap-10">
-          {TESTIMONIALS.map((t, i) => (
-            <figure key={t.name} className={`reveal reveal-delay-${i + 1} flex flex-col gap-8 border-t border-foreground pt-8`}>
-              <blockquote className="font-serif text-2xl leading-snug md:text-3xl">
-                "{t.quote}"
-              </blockquote>
-              <figcaption className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
-                {t.name} — <span className="normal-case tracking-normal">{t.role}</span>
-              </figcaption>
-            </figure>
-          ))}
+        <p className="reveal text-[10px] uppercase tracking-[0.3em] text-sakura">Reviews</p>
+        <h2 className="reveal reveal-delay-1 mt-4 font-display text-5xl font-black uppercase tracking-tight md:text-6xl">
+          Reviews
+        </h2>
+
+        <div className="mt-16 relative overflow-hidden">
+          {/* gradient fades on edges */}
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-background to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-background to-transparent" />
+
+          <div className="flex w-max animate-marquee gap-8">
+            {loop.map((r, i) => (
+              <div
+                key={i}
+                className="flex h-32 w-72 shrink-0 items-center justify-center rounded-xl border border-border bg-background/50"
+              >
+                <StarRow count={r.stars} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
+
+      {/* Marquee animation */}
+      <style>{`
+        @keyframes marquee {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+          animation: marquee 30s linear infinite;
+        }
+        .animate-marquee:hover {
+          animation-play-state: paused;
+        }
+      `}</style>
     </section>
   );
 }
