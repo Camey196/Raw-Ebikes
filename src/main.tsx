@@ -10,7 +10,6 @@ const queryClient = new QueryClient();
 const router = createRouter({
   routeTree,
   context: { queryClient },
-  basepath: '/Raw-Ebikes/',
   scrollRestoration: true,
   defaultPreloadStaleTime: 0,
 });
