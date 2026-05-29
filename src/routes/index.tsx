@@ -74,7 +74,6 @@ const REVIEWS = [
   { name: "Logan", stars: 5, text: "lowkey better than i thought" },
   { name: "George", stars: 4, text: "shipping was sound" },
 ];
-];
 
 const FAQ = [
   {
