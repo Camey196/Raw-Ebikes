@@ -1,4 +1,3 @@
-@'
 import { createFileRoute } from "@tanstack/react-router";
 import { useReveal } from "@/hooks/use-reveal";
 import { Petals } from "@/components/petals";
@@ -77,8 +76,8 @@ const FAQ = [
     a: "We ship worldwide from our studio in Antwerp. Shipping rates and delivery times depend on your region — see options in your bag at checkout.",
   },
   { q: "What is your return policy?", a: "Free 30-day returns on unridden bikes. We collect from your door." },
-  { q: "How are the editions different?", a: "Same frame, same drivetrain. The Noir, Bloom and Petal editions differ only in finish and hardware colorway." },
-  { q: "Do you restock sold-out editions?", a: "Noir is restocked monthly. Bloom and Petal are limited runs and may sell out for the season." },
+  { q: "How are the editions different?", a: "Same frame, same drivetrain. The Noir and Bloom editions differ only in finish and hardware colorway." },
+  { q: "Do you restock sold-out editions?", a: "Noir is restocked monthly. Bloom is a limited run and may sell out for the season." },
 ];
 
 function smoothScrollTo(id: string) {
@@ -447,4 +446,3 @@ function Footer() {
     </footer>
   );
 }
-'@ | Set-Content -Path src\routes\index.tsx -Encoding UTF8
