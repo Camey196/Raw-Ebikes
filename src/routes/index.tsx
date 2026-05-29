@@ -35,7 +35,7 @@ const VARIANTS: ProductVariant[] = [
     id: "raw-noir",
     name: "Baja Light + Battery pack + horn",
     variant: "Noir Edition",
-    price: 49.99,
+    price: 59.99,
     image: product1,
     description:
       "its a Baja Light with a horn kit which has a 8 slot AA battery pack, Next day delivery for uk users",
