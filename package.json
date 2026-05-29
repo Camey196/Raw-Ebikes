@@ -3,10 +3,10 @@
   "private": true,
   "sideEffects": false,
   "type": "module",
-"scripts": {
-  "dev": "npx vite",
-  "build": "npx vite build",
-  "preview": "npx vite preview",
+  "scripts": {
+    "dev": "npx vite",
+    "build": "npx vite build",
+    "preview": "npx vite preview",
     "lint": "eslint .",
     "format": "prettier --write ."
   },
@@ -65,6 +65,7 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.39.0",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "^2.1.1",
     "@types/node": "^22.16.5",
@@ -81,6 +82,7 @@
     "prettier": "^3.7.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.56.1",
-    "vite": "^7.3.1"
+    "vite": "^7.3.1",
+    "wrangler": "^4.95.0"
   }
 }
