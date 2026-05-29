@@ -33,18 +33,17 @@ const HERO_VIDEO_SRC = `https://www.youtube.com/embed/${HERO_YOUTUBE_ID}?autopla
 const VARIANTS: ProductVariant[] = [
   {
     id: "raw-noir",
-    name: "RAW EBIKE",
+    name: "Baja Light + Battery pack + horn",
     variant: "Noir Edition",
-    price: 3420,
+    price: 49.99,
     image: product1,
     description:
-      "The original — matte black frame, blacked-out hardware, and a quiet 750W mid-drive motor. Built for the city after dark.",
+      "its a Baja Light with a horn kit which has a 8 slot AA battery pack, Next day delivery for uk users",
     features: [
-      "750W mid-drive motor — 28mph top speed",
-      "85km range on a single charge",
-      "Hydraulic disc brakes",
-      "Carbon belt drive — zero maintenance",
-      "Integrated front + rear lights",
+      "Bright Baja Light",
+      "comes with handle bar buttons",
+      "Battery pack with 8 AA built for long rides",
+      "Loud Horn",
     ],
   },
   {
