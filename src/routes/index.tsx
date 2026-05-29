@@ -1,3 +1,4 @@
+@'
 import { createFileRoute } from "@tanstack/react-router";
 import { useReveal } from "@/hooks/use-reveal";
 import { Petals } from "@/components/petals";
@@ -5,7 +6,6 @@ import { Instagram, Twitter, Youtube, Mail, Plus, Minus, ArrowRight, ShoppingBag
 import { useState } from "react";
 import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
-import product3 from "@/assets/product-3.jpg";
 import sakuraTree from "@/assets/sakura-tree.png";
 import { useCart } from "@/context/cart";
 import { ProductModal, type ProductVariant } from "@/components/product-modal";
@@ -17,10 +17,10 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "RAW EBIKES — Sleek Sakura" },
-      { name: "description", content: "RAW EBIKES — premium electric bikes engineered with a sleek sakura streetwear aesthetic." },
-      { property: "og:title", content: "RAW EBIKES — Sleek Sakura" },
-      { property: "og:description", content: "Premium electric bikes. Black, white, and creamy pink." },
+      { title: "RAW EBIKES — Baja Light" },
+      { name: "description", content: "RAW EBIKES — premium baja lights for ebikes." },
+      { property: "og:title", content: "RAW EBIKES — Baja Light" },
+      { property: "og:description", content: "The best light at the price." },
     ],
   }),
   component: Index,
@@ -30,7 +30,7 @@ const STORE = "RAW EBIKES";
 const HERO_YOUTUBE_ID = "rP6nZ2NdTBQ";
 const HERO_VIDEO_SRC = `https://www.youtube.com/embed/${HERO_YOUTUBE_ID}?autoplay=1&mute=1&loop=1&playlist=${HERO_YOUTUBE_ID}&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1`;
 
-const VARIANTS: ProductVariant[] = [
+const VARIANTS: (ProductVariant & { limitedStock?: boolean; accentClass?: string })[] = [
   {
     id: "raw-noir",
     name: "Baja Light + Battery pack + horn",
@@ -38,45 +38,30 @@ const VARIANTS: ProductVariant[] = [
     price: 59.99,
     image: product1,
     description:
-      "its a Baja Light with a horn kit which has a 8 slot AA battery pack, Next day delivery for uk users",
+      "Its a Baja Light with a horn kit which has a 8 slot AA battery pack. Next day delivery for UK users.",
     features: [
       "Bright Baja Light",
-      "comes with handle bar buttons",
+      "Comes with handle bar buttons",
       "Battery pack with 8 AA built for long rides",
       "Loud Horn",
     ],
+    limitedStock: true,
   },
   {
     id: "raw-bloom",
-    name: "RAW EBIKE",
+    name: "Baja Light + battery pack",
     variant: "Bloom Edition",
-    price: 3680,
+    price: 49.99,
     image: product2,
     description:
-      "Matte black frame with creamy pink hardware — bell, grips, and saddle accents. The signature Sakura colorway.",
+      "Baja light with an 8-slot AA battery pack. Same quality light, simpler kit.",
     features: [
-      "Sakura pink anodized hardware kit",
-      "750W mid-drive motor — 28mph top speed",
-      "85km range on a single charge",
-      "Brooks leather saddle in cream",
-      "Limited release — 200 units",
+      "Bright Baja Light",
+      "Battery pack with 8 AA built for long rides",
+      "Easy install",
+      "UK shipping",
     ],
-  },
-  {
-    id: "raw-petal",
-    name: "RAW EBIKE",
-    variant: "Petal Edition",
-    price: 3920,
-    image: product3,
-    description:
-      "Full creamy pink frame, matte black components. The boldest expression of the RAW silhouette.",
-    features: [
-      "Hand-finished sakura pink frame",
-      "750W mid-drive motor — 28mph top speed",
-      "100km extended range battery",
-      "Carbon fiber fork",
-      "Made-to-order — 6 week lead time",
-    ],
+    accentClass: "yellow",
   },
 ];
 
@@ -159,7 +144,6 @@ function Hero() {
   return (
     <section id="top" className="relative h-screen min-h-[640px] w-full overflow-hidden bg-foreground">
       <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-70">
-        {/* Desktop: 16:9 (1920×1080) cover */}
         <iframe
           title="Hero background video"
           className="absolute top-1/2 left-1/2 hidden h-[56.25vw] w-full min-h-full min-w-[177.78vh] max-w-none -translate-x-1/2 -translate-y-1/2 border-0 md:block"
@@ -167,7 +151,6 @@ function Hero() {
           allow="autoplay; encrypted-media; picture-in-picture"
           referrerPolicy="strict-origin-when-cross-origin"
         />
-        {/* Mobile: 9:16 portrait — center crop of the video */}
         <iframe
           title="Hero background video"
           className="absolute top-1/2 left-1/2 h-full w-[177.78vh] max-w-none -translate-x-1/2 -translate-y-1/2 border-0 md:hidden"
@@ -240,66 +223,92 @@ function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) 
           <div>
             <p className="reveal text-[10px] uppercase tracking-[0.3em] text-sakura">01 — The Product</p>
             <h2 className="reveal reveal-delay-1 mt-4 font-display text-5xl font-black uppercase tracking-tight md:text-6xl">
-              Three Editions
+              Baja Light
             </h2>
           </div>
           <p className="reveal reveal-delay-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            One frame, three finishes. Tap a card to see specs, gallery and add
-            your edition to the bag.
+            the best light at the price
           </p>
         </div>
 
         <div className="space-y-24 md:space-y-32">
-          {VARIANTS.map((p, i) => (
-            <article
-              key={p.id}
-              className={`reveal relative grid grid-cols-12 items-center gap-y-6 ${
-                i % 2 === 1 ? "md:[&>.img]:col-start-6" : ""
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => onSelect(p)}
-                className="img relative col-span-12 cursor-pointer text-left md:col-span-7 md:row-start-1"
-                aria-label={`View ${p.variant}`}
-              >
-                <div className="hover-sakura-glow relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted">
-                  <img
-                    src={p.image}
-                    alt={`${p.name} ${p.variant}`}
-                    loading="lazy"
-                    width={1024}
-                    height={1280}
-                    className="h-full w-full object-cover transition-transform duration-[1200ms] hover:scale-[1.05]"
-                  />
-                  <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10" />
-                </div>
-                <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-4">
-                  <h3 className="font-display text-5xl font-black uppercase leading-none tracking-tight text-background mix-blend-difference sm:text-7xl md:text-8xl lg:text-[7rem] text-center">
-                    {p.variant}
-                  </h3>
-                </div>
-              </button>
-              <div
-                className={`col-span-12 flex flex-col gap-3 md:col-span-4 md:row-start-1 ${
-                  i % 2 === 1 ? "md:col-start-2" : "md:col-start-9"
+          {VARIANTS.map((p, i) => {
+            const isYellow = p.accentClass === "yellow";
+            return (
+              <article
+                key={p.id}
+                className={`reveal relative grid grid-cols-12 items-center gap-y-6 ${
+                  i % 2 === 1 ? "md:[&>.img]:col-start-6" : ""
                 }`}
               >
-                <p className="text-[10px] uppercase tracking-[0.3em] text-sakura">
-                  0{i + 1} / 03
-                </p>
-                <p className="font-serif text-2xl">{p.variant}</p>
-                <p className="text-sm text-muted-foreground tabular-nums">{formatPrice(p.price)}</p>
                 <button
+                  type="button"
                   onClick={() => onSelect(p)}
-                  className="group mt-4 inline-flex w-fit items-center gap-2 text-xs uppercase tracking-[0.25em] underline decoration-sakura decoration-2 underline-offset-8 hover:text-sakura"
+                  className="img relative col-span-12 cursor-pointer text-left md:col-span-7 md:row-start-1"
+                  aria-label={`View ${p.variant}`}
                 >
-                  View Product
-                  <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+                  <div className="hover-sakura-glow relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted">
+                    <img
+                      src={p.image}
+                      alt={`${p.name} ${p.variant}`}
+                      loading="lazy"
+                      width={1024}
+                      height={1280}
+                      className="h-full w-full object-cover transition-transform duration-[1200ms] hover:scale-[1.05]"
+                    />
+                    <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10" />
+                    {p.limitedStock && (
+                      <div className="absolute left-4 top-4 z-10 inline-flex items-center gap-2 bg-red-600 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-lg">
+                        <span className="inline-block h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                        Limited Stock
+                      </div>
+                    )}
+                  </div>
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-4">
+                    <h3
+                      className={`font-display text-5xl font-black uppercase leading-none tracking-tight mix-blend-difference sm:text-7xl md:text-8xl lg:text-[7rem] text-center ${
+                        isYellow ? "text-yellow-400" : "text-background"
+                      }`}
+                    >
+                      {p.variant}
+                    </h3>
+                  </div>
                 </button>
-              </div>
-            </article>
-          ))}
+                <div
+                  className={`col-span-12 flex flex-col gap-3 md:col-span-4 md:row-start-1 ${
+                    i % 2 === 1 ? "md:col-start-2" : "md:col-start-9"
+                  }`}
+                >
+                  <p
+                    className={`text-[10px] uppercase tracking-[0.3em] ${
+                      isYellow ? "text-yellow-500" : "text-sakura"
+                    }`}
+                  >
+                    0{i + 1} / 02
+                  </p>
+                  <p className="font-serif text-2xl">{p.variant}</p>
+                  <p
+                    className={`font-mono text-4xl font-bold tabular-nums tracking-tight ${
+                      isYellow ? "text-yellow-500" : "text-foreground"
+                    }`}
+                  >
+                    {formatPrice(p.price)}
+                  </p>
+                  <button
+                    onClick={() => onSelect(p)}
+                    className={`group mt-4 inline-flex w-fit items-center gap-2 text-xs uppercase tracking-[0.25em] underline decoration-2 underline-offset-8 ${
+                      isYellow
+                        ? "decoration-yellow-500 hover:text-yellow-500"
+                        : "decoration-sakura hover:text-sakura"
+                    }`}
+                  >
+                    View Product
+                    <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+                  </button>
+                </div>
+              </article>
+            );
+          })}
         </div>
       </div>
     </section>
@@ -335,7 +344,7 @@ function Testimonials() {
           {TESTIMONIALS.map((t, i) => (
             <figure key={t.name} className={`reveal reveal-delay-${i + 1} flex flex-col gap-8 border-t border-foreground pt-8`}>
               <blockquote className="font-serif text-2xl leading-snug md:text-3xl">
-                “{t.quote}”
+                "{t.quote}"
               </blockquote>
               <figcaption className="text-xs uppercase tracking-[0.2em] text-muted-foreground">
                 {t.name} — <span className="normal-case tracking-normal">{t.role}</span>
@@ -438,3 +447,4 @@ function Footer() {
     </footer>
   );
 }
+'@ | Set-Content -Path src\routes\index.tsx -Encoding UTF8
