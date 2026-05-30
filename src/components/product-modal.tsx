@@ -55,7 +55,7 @@ export function ProductModal({
           </div>
           <div className="flex flex-col p-8 md:p-10">
             <p className="text-[10px] uppercase tracking-[0.3em] text-sakura">{product.variant}</p>
-            <DialogTitle className="mt-3 font-display text-3xl font-black uppercase tracking-tight md:text-4xl">
+            <DialogTitle className="mt-3 font-['Newsreader'] text-4xl font-semibold leading-tight tracking-tight md:text-5xl">
               {product.name}
             </DialogTitle>
             <DialogDescription className="mt-4 text-sm leading-relaxed text-muted-foreground">
