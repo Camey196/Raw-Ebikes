@@ -37,14 +37,11 @@ function detectCurrency(): CurrencyCode {
 type CurrencyCtx = {
   currency: CurrencyCode;
   setCurrency: (code: CurrencyCode) => void;
-  /** Product prices — pass GBP and it shows correct currency */
   formatPrice: (amountGbp: number) => string;
-  /** Pass an object { gbp, usd, aud } and it shows the right one */
   formatRegionalPrice: (prices: { gbp: number; usd: number; aud: number }) => string;
-  /** Get raw price number for current region */
   getRegionalPrice: (prices: { gbp: number; usd: number; aud: number }) => number;
-  /** Fixed amounts (e.g. shipping) — pass GBP, converts to current currency */
   formatMoney: (amountGbp: number) => string;
+  convertUsd: (amountUsd: number) => number;
 };
 
 const Ctx = createContext<CurrencyCtx | null>(null);
@@ -101,8 +98,9 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
       formatRegionalPrice,
       getRegionalPrice,
       formatMoney,
+      convertUsd: (amountUsd: number) => Math.round(amountUsd * RATES[currency] * 1.27),
     };
-  }, [currency]);
+   }, [currency]);
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
