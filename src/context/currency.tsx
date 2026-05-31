@@ -3,18 +3,18 @@ import { createContext, useContext, useEffect, useMemo, useState, type ReactNode
 export type CurrencyCode = "USD" | "AUD" | "GBP";
 
 export const CURRENCY_OPTIONS: { code: CurrencyCode; label: string }[] = [
-  { code: "AUD", label: "AUS" },
-  { code: "USD", label: "American" },
   { code: "GBP", label: "UK" },
+  { code: "USD", label: "American" },
+  { code: "AUD", label: "AUS" },
 ];
 
 const STORAGE_KEY = "raw-ebikes-currency";
 
-/** Base prices are stored in USD; these are approximate display rates. */
+/** Conversion rates from GBP (base) — used for shipping/fixed amounts only */
 const RATES: Record<CurrencyCode, number> = {
-  USD: 1,
-  AUD: 1.55,
-  GBP: 0.79,
+  GBP: 1,
+  USD: 1.27,
+  AUD: 1.91,
 };
 
 const LOCALES: Record<CurrencyCode, string> = {
@@ -28,27 +28,29 @@ function detectCurrency(): CurrencyCode {
   const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
   if (locale.endsWith("-au") || tz.startsWith("Australia/")) return "AUD";
-  if (locale.endsWith("-gb") || locale.includes("-uk") || tz === "Europe/London") return "GBP";
   if (locale.endsWith("-us") || tz.startsWith("America/")) return "USD";
+  if (locale.endsWith("-gb") || locale.includes("-uk") || tz === "Europe/London") return "GBP";
 
-  return "USD";
+  return "GBP";
 }
 
 type CurrencyCtx = {
   currency: CurrencyCode;
   setCurrency: (code: CurrencyCode) => void;
-  /** Product prices stored in USD */
-  formatPrice: (amountUsd: number) => string;
-  /** Fixed amounts already in the selected currency (e.g. shipping) */
-  formatMoney: (amount: number) => string;
-  convertUsd: (amountUsd: number) => number;
+  /** Product prices — pass GBP and it shows correct currency */
+  formatPrice: (amountGbp: number) => string;
+  /** Pass an object { gbp, usd, aud } and it shows the right one */
+  formatRegionalPrice: (prices: { gbp: number; usd: number; aud: number }) => string;
+  /** Get raw price number for current region */
+  getRegionalPrice: (prices: { gbp: number; usd: number; aud: number }) => number;
+  /** Fixed amounts (e.g. shipping) — pass GBP, converts to current currency */
+  formatMoney: (amountGbp: number) => string;
 };
 
 const Ctx = createContext<CurrencyCtx | null>(null);
 
 export function CurrencyProvider({ children }: { children: ReactNode }) {
-  const [currency, setCurrencyState] = useState<CurrencyCode>("USD");
-  const [hydrated, setHydrated] = useState(false);
+  const [currency, setCurrencyState] = useState<CurrencyCode>("GBP");
 
   useEffect(() => {
     try {
@@ -61,7 +63,6 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
     } catch {
       setCurrencyState(detectCurrency());
     }
-    setHydrated(true);
   }, []);
 
   const setCurrency = (code: CurrencyCode) => {
@@ -72,8 +73,7 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
   };
 
   const value = useMemo<CurrencyCtx>(() => {
-    const convertUsd = (amountUsd: number) => Math.round(amountUsd * RATES[currency]);
-    const formatMoney = (amount: number) =>
+    const format = (amount: number) =>
       new Intl.NumberFormat(LOCALES[currency], {
         style: "currency",
         currency,
@@ -81,23 +81,28 @@ export function CurrencyProvider({ children }: { children: ReactNode }) {
         maximumFractionDigits: 2,
       }).format(amount);
 
+    const formatMoney = (amountGbp: number) => format(amountGbp * RATES[currency]);
+
+    const getRegionalPrice = (prices: { gbp: number; usd: number; aud: number }) => {
+      if (currency === "USD") return prices.usd;
+      if (currency === "AUD") return prices.aud;
+      return prices.gbp;
+    };
+
+    const formatRegionalPrice = (prices: { gbp: number; usd: number; aud: number }) =>
+      format(getRegionalPrice(prices));
+
+    const formatPrice = (amountGbp: number) => format(amountGbp * RATES[currency]);
+
     return {
       currency,
       setCurrency,
-      convertUsd,
+      formatPrice,
+      formatRegionalPrice,
+      getRegionalPrice,
       formatMoney,
-      formatPrice: (amountUsd: number) =>
-        new Intl.NumberFormat(LOCALES[currency], {
-          style: "currency",
-          currency,
-          maximumFractionDigits: 0,
-        }).format(convertUsd(amountUsd)),
     };
   }, [currency]);
-
-  if (!hydrated) {
-    return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
-  }
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useReveal } from "@/hooks/use-reveal";
 import { Petals } from "@/components/petals";
-import { Instagram, Twitter, Youtube, Mail, Plus, Minus, ArrowRight, ShoppingBag, Star } from "lucide-react";
+import { Instagram, Twitter, Youtube, Mail, Plus, Minus, ArrowRight, ShoppingBag, Star, Check } from "lucide-react";
 import { useState } from "react";
 import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
@@ -29,59 +29,77 @@ const STORE = "RAW EBIKES";
 const HERO_YOUTUBE_ID = "rP6nZ2NdTBQ";
 const HERO_VIDEO_SRC = `https://www.youtube.com/embed/${HERO_YOUTUBE_ID}?autoplay=1&mute=1&loop=1&playlist=${HERO_YOUTUBE_ID}&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1`;
 
-const VARIANTS: (ProductVariant & { limitedStock?: boolean; accentClass?: string })[] = [
+type VariantWithExtras = ProductVariant & {
+  limitedStock?: boolean;
+  highlight?: boolean;
+  pricesByRegion: { gbp: number; usd: number; aud: number };
+  stripeLinks?: { uk: string; us: string; au: string };
+};
+
+const VARIANTS: VariantWithExtras[] = [
   {
     id: "raw-noir",
     name: "Baja Light + Battery pack + horn",
     variant: "Baja Light + Battery pack + horn",
-    price: 59.99,
+    price: 49.99,
+    pricesByRegion: { gbp: 49.99, usd: 59.99, aud: 89.99 },
     image: product1,
     description:
-      "Its a Baja Light with a horn kit which has a 8 slot AA battery pack. Next day delivery for UK users.",
+      "Baja Light with a horn kit and 8-slot AA battery pack. Next day delivery for UK users.",
     features: [
       "Bright Baja Light",
-      "Comes with handle bar buttons",
-      "Battery pack with 8 AA built for long rides",
+      "Handle bar buttons included",
+      "8 AA battery pack — long rides",
       "Loud Horn",
     ],
     limitedStock: true,
+    highlight: true,
+    stripeLinks: {
+      uk: "https://buy.stripe.com/5kQeV68Mt0DX3ihag83VC07",
+      us: "https://buy.stripe.com/6oUbIUgeV1I14ml8803VC09",
+      au: "https://buy.stripe.com/00w9AM8Mt0DXdWVcog3VC08",
+    },
   },
   {
     id: "raw-bloom",
     name: "Baja Light + battery pack",
     variant: "Baja Light + battery pack",
-    price: 49.99,
+    price: 39.99,
+    pricesByRegion: { gbp: 39.99, usd: 49.99, aud: 79.99 },
     image: product2,
     description:
       "Baja light with an 8-slot AA battery pack. Same quality light, simpler kit.",
     features: [
       "Bright Baja Light",
-      "Battery pack with 8 AA built for long rides",
+      "8 AA battery pack — long rides",
       "Easy install",
       "UK shipping",
     ],
-    accentClass: "yellow",
+    stripeLinks: {
+      uk: "https://buy.stripe.com/aFa4gsbYF9at7yx5ZS3VC0a",
+      us: "https://buy.stripe.com/dRmaEQ3s95YhbON0Fy3VC0c",
+      au: "https://buy.stripe.com/cNibIU0fX86pg53dsk3VC0b",
+    },
   },
 ];
 
-// 5 reviews: 3 are 5-star, 2 are 4-star, no text, no image
 const REVIEWS = [
   { name: "Jake", stars: 5, text: "came rlly quick ngl" },
-  { name: "Max", stars: 5, text: "cheap asf for what u get 🔥" },
-  { name: "Cameron", stars: 4, text: "support actually replied fast which was nice" },
-  { name: "Juneau", stars: 5, text: "easiest checkout ever lol" },
-  { name: "Tim", stars: 4, text: "box was a bit beat up but stuff inside fine" },
-  { name: "Logan", stars: 5, text: "lowkey better than i thought" },
-  { name: "George", stars: 4, text: "shipping was sound" },
+  { name: "Mia", stars: 5, text: "cheap asf for what u get 🔥" },
+  { name: "Tom", stars: 4, text: "support actually replied fast which was nice" },
+  { name: "Lily", stars: 5, text: "easiest checkout ever lol" },
+  { name: "Ben", stars: 4, text: "box was a bit beat up but stuff inside fine" },
+  { name: "Ruby", stars: 5, text: "lowkey better than i thought" },
+  { name: "Alfie", stars: 4, text: "shipping was sound" },
 ];
 
 const FAQ = [
   {
     q: "Where do you ship?",
-    a: "We ship worldwide from our studio in Antwerp. Shipping rates and delivery times depend on your region — see options in your bag at checkout.",
+    a: "We ship worldwide. Shipping rates and delivery times depend on your region — see options at checkout.",
   },
-  { q: "What is your return policy?", a: "Free 30-day returns on unridden bikes. We collect from your door." },
-  { q: "How are the editions different?", a: "Same frame, same drivetrain. The editions differ in finish and hardware." },
+  { q: "What is your return policy?", a: "Free 30-day returns on unopened items. Just message us and we'll sort it." },
+  { q: "How are the editions different?", a: "Same Baja Light core. The premium version adds a loud horn + handlebar buttons." },
   { q: "Do you restock sold-out editions?", a: "We restock monthly when possible. Some runs are limited." },
 ];
 
@@ -110,7 +128,6 @@ function Index() {
 
 function SiteHeader() {
   const pastHero = usePastHero();
-
   return (
     <>
       <DeliveryBanner hidden={pastHero} />
@@ -164,7 +181,6 @@ function Hero() {
         />
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-foreground/60 via-foreground/40 to-foreground/80" />
-
       <img
         src={sakuraTree}
         alt=""
@@ -177,9 +193,7 @@ function Hero() {
         aria-hidden="true"
         className="pointer-events-none absolute -bottom-16 -left-24 z-[1] h-[45vh] w-auto rotate-180 opacity-60 md:h-[55vh]"
       />
-
       <Petals density={45} className="z-[2]" />
-
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-background">
         <p className="reveal mb-6 text-[10px] uppercase tracking-[0.4em] text-sakura">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-sakura align-middle mr-2" />
@@ -217,93 +231,141 @@ function Hero() {
 }
 
 function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) {
-  const { formatPrice } = useCurrency();
+  const { formatRegionalPrice } = useCurrency();
 
   return (
     <section id="shop" className="relative bg-background px-6 py-28 md:py-40 md:px-10 overflow-hidden">
       <Petals density={15} onBackground className="opacity-50" />
+
       <div className="relative mx-auto max-w-7xl">
         <div className="mb-20 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="reveal text-[10px] uppercase tracking-[0.3em] text-sakura">01 — The Product</p>
-            <h2 className="reveal reveal-delay-1 mt-4 font-display text-5xl font-black uppercase tracking-tight md:text-6xl">
+            <h2 className="reveal reveal-delay-1 mt-4 font-display text-5xl font-black uppercase tracking-tight md:text-7xl">
               Baja Light
             </h2>
           </div>
           <p className="reveal reveal-delay-2 max-w-sm text-sm leading-relaxed text-muted-foreground">
-            the best light at the price
+            the best light at the price — pick your build
           </p>
         </div>
 
-        <div className="space-y-24 md:space-y-32">
+        <div className="reveal grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8">
           {VARIANTS.map((p, i) => {
-            const isYellow = p.accentClass === "yellow";
+            const isHighlight = p.highlight;
+
             return (
-              <article
+              <div
                 key={p.id}
-                className={`reveal relative grid grid-cols-12 items-center gap-y-6 ${
-                  i % 2 === 1 ? "md:[&>.img]:col-start-6" : ""
-                }`}
+                className={cn(
+                  "group relative flex flex-col overflow-hidden rounded-3xl border bg-foreground text-background transition-all duration-500 hover:-translate-y-2",
+                  isHighlight
+                    ? "border-sakura shadow-[0_0_60px_rgba(244,160,190,0.4)] hover:shadow-[0_0_90px_rgba(244,160,190,0.7)]"
+                    : "border-background/10 hover:border-sakura/40 hover:shadow-[0_0_60px_rgba(244,160,190,0.25)]",
+                )}
               >
+                {isHighlight && (
+                  <div className="absolute right-4 top-4 z-20">
+                    <div className="flex items-center gap-1.5 bg-sakura px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-foreground shadow-md">
+                      <Star className="h-3 w-3 fill-foreground" />
+                      Most Popular
+                    </div>
+                  </div>
+                )}
+
+                <div className="pointer-events-none absolute -left-4 top-4 z-0 font-display text-[10rem] font-black leading-none text-background/5 md:text-[12rem]">
+                  0{i + 1}
+                </div>
+
                 <button
                   type="button"
                   onClick={() => onSelect(p)}
-                  className="img relative col-span-12 cursor-pointer text-left md:col-span-7 md:row-start-1"
+                  className="relative aspect-square overflow-hidden bg-foreground"
                   aria-label={`View ${p.name}`}
                 >
-                  <div className="hover-sakura-glow relative aspect-[4/5] overflow-hidden rounded-2xl bg-muted">
-                    <img
-                      src={p.image}
-                      alt={p.name}
-                      loading="lazy"
-                      width={1024}
-                      height={1280}
-                      className="h-full w-full object-cover transition-transform duration-[1200ms] hover:scale-[1.05]"
-                    />
-                    <div className="pointer-events-none absolute inset-0 rounded-2xl ring-1 ring-inset ring-white/10" />
-                    {p.limitedStock && (
-                      <div className="absolute left-4 top-4 z-10 inline-flex items-center gap-2 bg-red-600 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-lg">
-                        <span className="inline-block h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
-                        Limited Stock
-                      </div>
-                    )}
+                  <img
+                    src={p.image}
+                    alt={p.name}
+                    loading="lazy"
+                    className="h-full w-full object-cover opacity-90 transition-all duration-[1200ms] group-hover:scale-110 group-hover:opacity-100"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
+
+                  {p.limitedStock && (
+                    <div className="absolute left-4 top-4 z-10 inline-flex items-center gap-2 bg-red-600 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-white shadow-lg">
+                      <span className="inline-block h-1.5 w-1.5 rounded-full bg-white animate-pulse" />
+                      Only 8 Left
+                    </div>
+                  )}
+
+                  <div className="absolute bottom-6 left-6 right-6 z-10">
+                    <p className="text-[10px] uppercase tracking-[0.3em] text-sakura">0{i + 1} / 02</p>
+                    <h3 className="mt-2 font-display text-2xl font-black uppercase leading-tight tracking-tight text-background md:text-3xl">
+                      {p.name}
+                    </h3>
                   </div>
                 </button>
-                <div
-                  className={`col-span-12 flex flex-col gap-3 md:col-span-4 md:row-start-1 ${
-                    i % 2 === 1 ? "md:col-start-2" : "md:col-start-9"
-                  }`}
-                >
-                  <p
-                    className={`text-[10px] uppercase tracking-[0.3em] ${
-                      isYellow ? "text-yellow-500" : "text-sakura"
-                    }`}
-                  >
-                    0{i + 1} / 02
-                  </p>
-                  <p className="font-display text-2xl font-bold uppercase tracking-tight">{p.name}</p>
-                  <p
-                    className={`font-mono text-4xl font-bold tabular-nums tracking-tight ${
-                      isYellow ? "text-yellow-500" : "text-foreground"
-                    }`}
-                  >
-                    {formatPrice(p.price)}
-                  </p>
+
+                <div className="relative z-10 flex flex-1 flex-col gap-6 p-6 md:p-8">
+                  <div className="flex items-baseline justify-between border-b border-background/10 pb-5">
+                    <span className="font-mono text-5xl font-bold tabular-nums tracking-tight text-sakura">
+                      {formatRegionalPrice(p.pricesByRegion)}
+                    </span>
+                    <span className="text-[10px] uppercase tracking-[0.25em] text-background/60">
+                      one-time
+                    </span>
+                  </div>
+
+                  <ul className="space-y-3 text-sm">
+                    {p.features.map((f) => (
+                      <li key={f} className="flex items-start gap-3">
+                        <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-sakura/20">
+                          <Check className="h-3 w-3 text-sakura" />
+                        </div>
+                        <span className="text-background/90">{f}</span>
+                      </li>
+                    ))}
+                    {!isHighlight && (
+                      <li className="flex items-start gap-3 opacity-40">
+                        <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-background/10">
+                          <span className="text-[10px]">—</span>
+                        </div>
+                        <span className="line-through text-background/60">No horn included</span>
+                      </li>
+                    )}
+                  </ul>
+
                   <button
                     onClick={() => onSelect(p)}
-                    className={`group mt-4 inline-flex w-fit items-center gap-2 text-xs uppercase tracking-[0.25em] underline decoration-2 underline-offset-8 ${
-                      isYellow
-                        ? "decoration-yellow-500 hover:text-yellow-500"
-                        : "decoration-sakura hover:text-sakura"
-                    }`}
+                    className={cn(
+                      "group/btn relative mt-auto inline-flex items-center justify-center gap-3 overflow-hidden border-2 px-6 py-4 text-xs font-semibold uppercase tracking-[0.25em] transition-all",
+                      isHighlight
+                        ? "border-sakura bg-sakura text-foreground hover:bg-background hover:text-foreground"
+                        : "border-background/30 bg-transparent text-background hover:border-sakura hover:bg-sakura hover:text-foreground",
+                    )}
                   >
-                    View Product
-                    <ArrowRight className="h-3 w-3 transition-transform group-hover:translate-x-1" />
+                    <span className="relative z-10">Buy Now</span>
+                    <ArrowRight className="relative z-10 h-3.5 w-3.5 transition-transform group-hover/btn:translate-x-1" />
                   </button>
                 </div>
-              </article>
+              </div>
             );
           })}
+        </div>
+
+        <div className="reveal mt-20 grid grid-cols-2 gap-6 border-t border-border pt-12 text-center md:grid-cols-4">
+          {[
+            { icon: "🔒", title: "Secure Checkout", sub: "Powered by Stripe" },
+            { icon: "📦", title: "Fast Shipping", sub: "UK Next Day Available" },
+            { icon: "↩️", title: "30-Day Returns", sub: "No questions asked" },
+            { icon: "🇬🇧", title: "UK Based", sub: "Real support" },
+          ].map((t) => (
+            <div key={t.title} className="flex flex-col items-center gap-2">
+              <div className="text-3xl">{t.icon}</div>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.25em]">{t.title}</p>
+              <p className="text-[10px] text-muted-foreground">{t.sub}</p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
@@ -339,10 +401,9 @@ function StarRow({ count }: { count: number }) {
     </div>
   );
 }
-function Reviews() {
-  // Duplicate the list so the marquee scrolls seamlessly
-  const loop = [...REVIEWS, ...REVIEWS, ...REVIEWS];
 
+function Reviews() {
+  const loop = [...REVIEWS, ...REVIEWS, ...REVIEWS];
   return (
     <section className="border-y border-border bg-background px-6 py-28 md:py-40 md:px-10 overflow-hidden">
       <div className="mx-auto max-w-7xl">
@@ -350,38 +411,32 @@ function Reviews() {
         <h2 className="reveal reveal-delay-1 mt-4 font-display text-5xl font-black uppercase tracking-tight md:text-6xl">
           Reviews
         </h2>
-
         <div className="mt-16 relative overflow-hidden">
-          {/* gradient fades on edges */}
           <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-background to-transparent" />
           <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-background to-transparent" />
-
           <div className="flex w-max animate-marquee gap-8">
-           {loop.map((r, i) => (
-  <div
-    key={i}
-    className="flex h-40 w-80 shrink-0 flex-col justify-between rounded-xl border border-border bg-background/50 p-5"
-  >
-    <div className="flex items-center gap-3">
-      <img
-        src={r.avatar}
-        alt={r.name}
-        className="h-10 w-10 rounded-full object-cover"
-        loading="lazy"
-      />
-      <div>
-        <p className="font-serif text-sm font-medium">{r.name}</p>
-        <StarRow count={r.stars} />
-      </div>
-    </div>
-    <p className="text-sm leading-snug text-muted-foreground">"{r.text}"</p>
-  </div>
-))}
+            {loop.map((r, i) => (
+              <div
+                key={i}
+                className="flex h-40 w-80 shrink-0 flex-col justify-between rounded-xl border border-border bg-background/50 p-5"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="h-7 w-7 text-muted-foreground/60">
+                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <p className="font-serif text-sm font-medium">{r.name}</p>
+                    <StarRow count={r.stars} />
+                  </div>
+                </div>
+                <p className="text-sm leading-snug text-muted-foreground">{r.text}</p>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-
-      {/* Marquee animation */}
       <style>{`
         @keyframes marquee {
           0% { transform: translateX(0); }
@@ -400,7 +455,6 @@ function Reviews() {
 
 function Faq() {
   const [open, setOpen] = useState<number | null>(0);
-
   return (
     <section id="faq" className="bg-background px-6 py-28 md:py-40 md:px-10">
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-16 md:grid-cols-12">
@@ -420,10 +474,7 @@ function Faq() {
                   <span className="font-serif text-xl md:text-2xl">{item.q}</span>
                   {isOpen ? <Minus className="h-4 w-4 shrink-0 text-sakura" /> : <Plus className="h-4 w-4 shrink-0" />}
                 </button>
-                <div
-                  className="grid overflow-hidden transition-all duration-500"
-                  style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}
-                >
+                <div className="grid overflow-hidden transition-all duration-500" style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}>
                   <div className="min-h-0">
                     <p className="pb-6 pr-10 text-sm leading-relaxed text-muted-foreground">{item.a}</p>
                   </div>
@@ -446,8 +497,7 @@ function Footer() {
           <div className="md:col-span-5">
             <h3 className="font-display text-5xl font-black uppercase tracking-tight md:text-7xl">{STORE}</h3>
             <p className="mt-6 max-w-sm text-sm leading-relaxed opacity-70">
-              Premium electric bikes for the modern city. Built raw, finished
-              soft. Shipped worldwide.
+              Premium electric bike lights. Built raw, finished soft. Shipped worldwide.
             </p>
           </div>
           <div className="md:col-span-3">
@@ -462,8 +512,6 @@ function Footer() {
             <p className="text-[10px] uppercase tracking-[0.3em] text-sakura">Contact</p>
             <ul className="mt-6 space-y-3 text-sm">
               <li>studio@rawebikes.co</li>
-              <li>+32 3 555 0142</li>
-              <li>Kloosterstraat 14, Antwerp</li>
             </ul>
             <div className="mt-8 flex gap-5">
               <a href="#" aria-label="Instagram" className="hover:text-sakura"><Instagram className="h-5 w-5" /></a>
