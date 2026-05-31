@@ -98,11 +98,11 @@ const VARIANTS: VariantWithExtras[] = [
 
 const REVIEWS = [
   { name: "Jake", stars: 5, text: "came rlly quick ngl" },
-  { name: "Mia", stars: 5, text: "cheap asf for what u get 🔥" },
+  { name: "Max", stars: 5, text: "cheap asf for what u get 🔥" },
   { name: "Tom", stars: 4, text: "support actually replied fast which was nice" },
-  { name: "Lily", stars: 5, text: "easiest checkout ever lol" },
+  { name: "Leo", stars: 5, text: "easiest checkout ever lol" },
   { name: "Ben", stars: 4, text: "box was a bit beat up but stuff inside fine" },
-  { name: "Ruby", stars: 5, text: "lowkey better than i thought" },
+  { name: "Ryan", stars: 5, text: "lowkey better than i thought" },
   { name: "Alfie", stars: 4, text: "shipping was sound" },
 ];
 
@@ -343,10 +343,10 @@ function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) 
               <div
                 key={p.id}
                 className={cn(
-                  "group relative flex flex-col overflow-hidden rounded-3xl border transition-all duration-500 md:hover:-translate-y-2 md:hover:scale-[1.02]",
+                  "group relative flex flex-col overflow-hidden rounded-2xl border transition-all duration-500 md:hover:-translate-y-1",
                   isHighlight
-                    ? "bg-gradient-to-br from-foreground via-purple-900/20 to-foreground border-sakura shadow-[0_0_80px_rgba(244,160,190,0.5)] md:hover:shadow-[0_0_120px_rgba(244,160,190,0.8)]"
-                    : "bg-gradient-to-br from-foreground via-pink-900/20 to-foreground border-sakura/40 md:hover:border-sakura md:hover:shadow-[0_0_80px_rgba(244,160,190,0.35)]",
+                    ? "bg-foreground border-sakura/50 shadow-lg md:hover:shadow-xl"
+                    : "bg-foreground border-border/30 shadow-md md:hover:shadow-lg",
                 )}
               >
                 {isHighlight && (
@@ -358,15 +358,6 @@ function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) 
                   </div>
                 )}
 
-                <div className={cn(
-                  "pointer-events-none absolute -left-4 top-4 z-0 font-display text-[10rem] font-black leading-none md:text-[12rem] bg-clip-text",
-                  isHighlight
-                    ? "bg-gradient-to-br from-sakura/30 via-purple-400/20 to-transparent"
-                    : "bg-gradient-to-br from-sakura/30 via-pink-400/20 to-transparent"
-                )}>
-                  0{i + 1}
-                </div>
-
                 <button
                   type="button"
                   onClick={() => onSelect(p)}
@@ -377,7 +368,7 @@ function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) 
                     src={p.image}
                     alt={p.name}
                     loading="lazy"
-                    className="h-full w-full object-cover opacity-90 transition-all duration-[1200ms] group-hover:scale-110 group-hover:opacity-100 group-hover:brightness-110"
+                    className="h-full w-full object-cover transition-all duration-700 group-hover:scale-105"
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-foreground/60 via-transparent to-transparent" />
 
@@ -389,37 +380,29 @@ function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) 
                   )}
 
                   <div className="absolute bottom-6 left-6 right-6 z-10">
-                    <p className="text-[10px] uppercase tracking-[0.3em] font-bold text-sakura">0{i + 1} / 02</p>
-                    <h3 className="mt-2 font-display text-2xl font-black uppercase leading-tight tracking-tight text-background md:text-3xl drop-shadow-lg">
+                    <h3 className="font-display text-xl font-black uppercase leading-tight tracking-tight text-background md:text-2xl">
                       {p.name}
                     </h3>
                   </div>
                 </button>
 
-                <div className="relative z-10 flex flex-1 flex-col gap-6 p-6 md:p-8">
-                  <div className="flex items-baseline justify-between border-b border-background/10 pb-5">
-                    <span className="font-mono text-5xl font-bold tabular-nums tracking-tight text-sakura drop-shadow-[0_0_20px_rgba(244,160,190,0.5)]">
+                <div className="relative z-10 flex flex-1 flex-col gap-5 p-5 md:p-6">
+                  <div className="flex items-baseline justify-between border-b border-border/50 pb-4">
+                    <span className="font-mono text-4xl font-bold tabular-nums tracking-tight text-sakura">
                       {formatRegionalPrice(p.pricesByRegion)}
-                    </span>
-                    <span className="text-[10px] uppercase tracking-[0.25em] text-background/60">
-                      one-time
                     </span>
                   </div>
 
-                  <ul className="space-y-3 text-sm">
+                  <ul className="space-y-2 text-sm">
                     {p.features.map((f) => (
                       <li key={f} className="flex items-start gap-3">
-                        <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-sakura/20 ring-2 ring-sakura/30">
-                          <Check className="h-3 w-3 text-sakura" />
-                        </div>
-                        <span className="text-background/90 font-medium">{f}</span>
+                        <Check className="mt-0.5 h-4 w-4 shrink-0 text-sakura" />
+                        <span className="text-background/80">{f}</span>
                       </li>
                     ))}
                     {!isHighlight && (
                       <li className="flex items-start gap-3 opacity-40">
-                        <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-background/10">
-                          <span className="text-[10px]">—</span>
-                        </div>
+                        <span className="mt-0.5 h-4 w-4 shrink-0 text-[10px]">—</span>
                         <span className="line-through text-background/60">No horn included</span>
                       </li>
                     )}
@@ -605,6 +588,19 @@ function Footer() {
               <li><a href="#" className="hover:text-sakura">New Arrivals</a></li>
               <li><a href="#" className="hover:text-sakura">Archive</a></li>
             </ul>
+          </div>
+          <div className="md:col-span-4">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-sakura">Contact</p>
+            <ul className="mt-6 space-y-3 text-sm">
+              <li>support@rawebikes.dpdns.org</li>
+            </ul>
+            <div className="mt-8 flex gap-5">
+              <a href="#" aria-label="Instagram" className="hover:text-sakura"><Instagram className="h-5 w-5" /></a>
+              <a href="#" aria-label="Twitter" className="hover:text-sakura"><Twitter className="h-5 w-5" /></a>
+              <a href="#" aria-label="YouTube" className="hover:text-sakura"><Youtube className="h-5 w-5" /></a>
+              <a href="#" aria-label="TikTok" className="hover:text-sakura"><svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/></svg></a>
+              <a href="mailto:support@rawebikes.dpdns.org" aria-label="Email" className="hover:text-sakura"><Mail className="h-5 w-5" /></a>
+            </div>
           </div>
         </div>
         <div className="mt-16 border-t border-background/20 pt-8">
