@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useReveal } from "@/hooks/use-reveal";
 import { Petals } from "@/components/petals";
-import { Instagram, Twitter, Youtube, Mail, Plus, Minus, ArrowRight, ShoppingBag, Star, Check, Menu, X } from "lucide-react";
+import { Instagram, Twitter, Youtube, Mail, Plus, Minus, ArrowRight, ShoppingBag, Star, Check, Menu, X, User } from "lucide-react";
 import { useState, useEffect } from "react";
 import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
@@ -29,6 +29,9 @@ export const Route = createFileRoute("/")({
 const STORE = "RAW EBIKES";
 const HERO_YOUTUBE_ID = "rP6nZ2NdTBQ";
 const HERO_VIDEO_SRC = `https://www.youtube.com/embed/${HERO_YOUTUBE_ID}?autoplay=1&mute=1&loop=1&playlist=${HERO_YOUTUBE_ID}&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1`;
+
+// 👇 PASTE YOUR STRIPE CUSTOMER PORTAL URL HERE
+const STRIPE_PORTAL_URL = "https://billing.stripe.com/p/login/14A3co7IpgCVaKJ4VO3VC00";
 
 // Mobile detection hook (only used to reduce petal count for performance)
 function useIsMobile() {
@@ -68,9 +71,9 @@ const VARIANTS: VariantWithExtras[] = [
     limitedStock: true,
     highlight: true,
     stripeLinks: {
-      uk: "https://buy.stripe.com/5kQeV68Mt0DX3ihag83VC07",
-      us: "https://buy.stripe.com/6oUbIUgeV1I14ml8803VC09",
-      au: "https://buy.stripe.com/00w9AM8Mt0DXdWVcog3VC08",
+      uk: "https://buy.stripe.com/cNi7sEfaRcmFg535ZS3VC0d",
+      us: "https://buy.stripe.com/5kQeV68Mt0DX3ihag83VC07",
+      au: "https://buy.stripe.com/6oUbIUgeV1I14ml8803VC09",
     },
   },
   {
@@ -89,8 +92,8 @@ const VARIANTS: VariantWithExtras[] = [
       "UK shipping",
     ],
     stripeLinks: {
-      uk: "https://buy.stripe.com/aFa4gsbYF9at7yx5ZS3VC0a",
-      us: "https://buy.stripe.com/dRmaEQ3s95YhbON0Fy3VC0c",
+      uk: "https://buy.stripe.com/dRmaEQ3s95YhbON0Fy3VC0c",
+      us: "https://buy.stripe.com/aFa4gsbYF9at7yx5ZS3VC0a",
       au: "https://buy.stripe.com/cNibIU0fX86pg53dsk3VC0b",
     },
   },
@@ -113,6 +116,7 @@ const FAQ = [
   },
   { q: "How are the editions different?", a: "Same Baja Light core. The premium version adds a loud horn + handlebar buttons." },
   { q: "Do you restock sold-out editions?", a: "We restock monthly when possible. Some runs are limited." },
+  { q: "Where can I see my past orders?", a: "Click 'Account' in the menu, enter your email, and we'll send you a secure login link to view your orders and update info." },
 ];
 
 function smoothScrollTo(id: string) {
@@ -171,8 +175,25 @@ function Nav({ pastHero }: { pastHero: boolean }) {
             <button onClick={() => smoothScrollTo("shop")} className="hover:opacity-70">Shop</button>
             <button onClick={() => smoothScrollTo("story")} className="hover:opacity-70">Story</button>
             <button onClick={() => smoothScrollTo("faq")} className="hover:opacity-70">FAQ</button>
+            <a
+              href={STRIPE_PORTAL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:opacity-70"
+            >
+              Account
+            </a>
           </nav>
           <div className="flex items-center gap-4">
+            <a
+              href={STRIPE_PORTAL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] hover:opacity-70"
+              aria-label="Account"
+            >
+              <User className="h-3.5 w-3.5" />
+            </a>
             <button onClick={open} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] hover:opacity-70">
               <ShoppingBag className="h-3.5 w-3.5" />
               Bag ({count})
@@ -222,6 +243,15 @@ function Nav({ pastHero }: { pastHero: boolean }) {
               >
                 FAQ
               </button>
+              <a
+                href={STRIPE_PORTAL_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMenuOpen(false)}
+                className="font-display text-4xl font-black uppercase tracking-tight hover:text-sakura"
+              >
+                Account
+              </a>
               <div className="mt-8 w-32 border-t border-background/20 pt-8 text-center">
                 <button
                   onClick={() => {
@@ -585,7 +615,16 @@ function Footer() {
             <p className="text-[10px] uppercase tracking-[0.3em] text-sakura">Shop</p>
             <ul className="mt-6 space-y-3 text-sm">
               <li><a href="#shop" className="hover:text-sakura">All Editions</a></li>
-              <li><a href="#" className="hover:text-sakura">New Arrivals</a></li>
+              <li>
+                <a
+                  href={STRIPE_PORTAL_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-sakura"
+                >
+                  My Account
+                </a>
+              </li>
               <li><a href="#" className="hover:text-sakura">Archive</a></li>
             </ul>
           </div>
