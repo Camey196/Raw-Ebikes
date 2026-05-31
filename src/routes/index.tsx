@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useReveal } from "@/hooks/use-reveal";
 import { Petals } from "@/components/petals";
-import { Instagram, Twitter, Youtube, Mail, Plus, Minus, ArrowRight, ShoppingBag, Star, Check } from "lucide-react";
-import { useState } from "react";
+import { Instagram, Twitter, Youtube, Mail, Plus, Minus, ArrowRight, ShoppingBag, Star, Check, Menu, X } from "lucide-react";
+import { useState, useEffect } from "react";
 import product1 from "@/assets/product-1.jpg";
 import product2 from "@/assets/product-2.jpg";
 import sakuraTree from "@/assets/sakura-tree.png";
@@ -18,6 +18,7 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "RAW EBIKES — Baja Light" },
       { name: "description", content: "RAW EBIKES — premium baja lights for ebikes." },
+      { name: "viewport", content: "width=device-width, initial-scale=1, maximum-scale=5" },
       { property: "og:title", content: "RAW EBIKES — Baja Light" },
       { property: "og:description", content: "The best light at the price." },
     ],
@@ -28,6 +29,18 @@ export const Route = createFileRoute("/")({
 const STORE = "RAW EBIKES";
 const HERO_YOUTUBE_ID = "rP6nZ2NdTBQ";
 const HERO_VIDEO_SRC = `https://www.youtube.com/embed/${HERO_YOUTUBE_ID}?autoplay=1&mute=1&loop=1&playlist=${HERO_YOUTUBE_ID}&controls=0&rel=0&modestbranding=1&playsinline=1&iv_load_policy=3&disablekb=1`;
+
+// Mobile detection hook (only used to reduce petal count for performance)
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 768);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isMobile;
+}
 
 type VariantWithExtras = ProductVariant & {
   limitedStock?: boolean;
@@ -137,30 +150,100 @@ function SiteHeader() {
 
 function Nav({ pastHero }: { pastHero: boolean }) {
   const { open, count } = useCart();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const handleNav = (id: string) => {
+    setMenuOpen(false);
+    setTimeout(() => smoothScrollTo(id), 100);
+  };
+
   return (
-    <header
-      className={cn(
-        "fixed left-0 right-0 z-50 mix-blend-difference transition-[top] duration-300 ease-out",
-        pastHero ? "top-0" : "top-10",
+    <>
+      <header
+        className={cn(
+          "fixed left-0 right-0 z-50 mix-blend-difference transition-[top] duration-300 ease-out",
+          pastHero ? "top-0" : "top-10",
+        )}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 text-white md:px-10">
+          <a href="#top" className="text-xs font-bold uppercase tracking-[0.25em]">{STORE}</a>
+          <nav className="hidden gap-8 text-xs uppercase tracking-[0.18em] md:flex">
+            <button onClick={() => smoothScrollTo("shop")} className="hover:opacity-70">Shop</button>
+            <button onClick={() => smoothScrollTo("story")} className="hover:opacity-70">Story</button>
+            <button onClick={() => smoothScrollTo("faq")} className="hover:opacity-70">FAQ</button>
+          </nav>
+          <div className="flex items-center gap-4">
+            <button onClick={open} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] hover:opacity-70">
+              <ShoppingBag className="h-3.5 w-3.5" />
+              Bag ({count})
+            </button>
+            {/* Mobile-only menu button */}
+            <button
+              onClick={() => setMenuOpen(true)}
+              className="flex h-11 w-11 items-center justify-center md:hidden"
+              aria-label="Open menu"
+            >
+              <Menu className="h-6 w-6" />
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* Mobile menu overlay */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-[100] bg-foreground/95 backdrop-blur md:hidden">
+          <div className="flex h-full flex-col">
+            <div className="flex items-center justify-between px-6 py-6 text-background">
+              <span className="text-xs font-bold uppercase tracking-[0.25em]">{STORE}</span>
+              <button
+                onClick={() => setMenuOpen(false)}
+                className="flex h-11 w-11 items-center justify-center"
+                aria-label="Close menu"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <nav className="flex flex-1 flex-col items-center justify-center gap-8 text-background">
+              <button
+                onClick={() => handleNav("shop")}
+                className="font-display text-4xl font-black uppercase tracking-tight hover:text-sakura"
+              >
+                Shop
+              </button>
+              <button
+                onClick={() => handleNav("story")}
+                className="font-display text-4xl font-black uppercase tracking-tight hover:text-sakura"
+              >
+                Story
+              </button>
+              <button
+                onClick={() => handleNav("faq")}
+                className="font-display text-4xl font-black uppercase tracking-tight hover:text-sakura"
+              >
+                FAQ
+              </button>
+              <div className="mt-8 w-32 border-t border-background/20 pt-8 text-center">
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    open();
+                  }}
+                  className="text-xs uppercase tracking-[0.25em] hover:text-sakura"
+                >
+                  Open Bag ({count})
+                </button>
+              </div>
+            </nav>
+          </div>
+        </div>
       )}
-    >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 text-white md:px-10">
-        <a href="#top" className="text-xs font-bold uppercase tracking-[0.25em]">{STORE}</a>
-        <nav className="hidden gap-8 text-xs uppercase tracking-[0.18em] md:flex">
-          <button onClick={() => smoothScrollTo("shop")} className="hover:opacity-70">Shop</button>
-          <button onClick={() => smoothScrollTo("story")} className="hover:opacity-70">Story</button>
-          <button onClick={() => smoothScrollTo("faq")} className="hover:opacity-70">FAQ</button>
-        </nav>
-        <button onClick={open} className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.18em] hover:opacity-70">
-          <ShoppingBag className="h-3.5 w-3.5" />
-          Bag ({count})
-        </button>
-      </div>
-    </header>
+    </>
   );
 }
 
 function Hero() {
+  const isMobile = useIsMobile();
+
   return (
     <section id="top" className="relative h-screen min-h-[640px] w-full overflow-hidden bg-foreground">
       <div className="pointer-events-none absolute inset-0 overflow-hidden opacity-70">
@@ -180,19 +263,21 @@ function Hero() {
         />
       </div>
       <div className="absolute inset-0 bg-gradient-to-b from-foreground/60 via-foreground/40 to-foreground/80" />
+      {/* Top-right sakura tree — smaller on mobile */}
       <img
         src={sakuraTree}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute -top-10 -right-20 z-[1] h-[70vh] w-auto max-w-[70vw] opacity-90 animate-sway drop-shadow-[0_10px_40px_rgba(244,160,190,0.35)] md:-right-10 md:h-[90vh]"
+        className="pointer-events-none absolute -top-6 -right-12 z-[1] h-[35vh] w-auto max-w-[50vw] opacity-90 animate-sway drop-shadow-[0_10px_40px_rgba(244,160,190,0.35)] md:-top-10 md:-right-10 md:h-[90vh] md:max-w-[70vw]"
       />
+      {/* Bottom-left sakura tree — smaller on mobile */}
       <img
         src={sakuraTree}
         alt=""
         aria-hidden="true"
-        className="pointer-events-none absolute -bottom-16 -left-24 z-[1] h-[45vh] w-auto rotate-180 opacity-60 md:h-[55vh]"
+        className="pointer-events-none absolute -bottom-10 -left-14 z-[1] h-[22vh] w-auto rotate-180 opacity-60 md:-bottom-16 md:-left-24 md:h-[55vh]"
       />
-      <Petals density={45} className="z-[2]" />
+      <Petals density={isMobile ? 18 : 45} className="z-[2]" />
       <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 text-center text-background">
         <p className="reveal mb-6 text-[10px] uppercase tracking-[0.4em] text-sakura">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-sakura align-middle mr-2" />
@@ -231,10 +316,11 @@ function Hero() {
 
 function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) {
   const { formatRegionalPrice } = useCurrency();
+  const isMobile = useIsMobile();
 
   return (
     <section id="shop" className="relative bg-background px-6 py-28 md:py-40 md:px-10 overflow-hidden">
-      <Petals density={15} onBackground className="opacity-50" />
+      <Petals density={isMobile ? 6 : 15} onBackground className="opacity-50" />
 
       <div className="relative mx-auto max-w-7xl">
         <div className="mb-20 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
@@ -257,10 +343,10 @@ function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) 
               <div
                 key={p.id}
                 className={cn(
-                  "group relative flex flex-col overflow-hidden rounded-3xl border transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02]",
+                  "group relative flex flex-col overflow-hidden rounded-3xl border transition-all duration-500 md:hover:-translate-y-2 md:hover:scale-[1.02]",
                   isHighlight
-                    ? "bg-gradient-to-br from-foreground via-purple-900/20 to-foreground border-sakura shadow-[0_0_80px_rgba(244,160,190,0.5)] hover:shadow-[0_0_120px_rgba(244,160,190,0.8)]"
-                    : "bg-gradient-to-br from-foreground via-pink-900/20 to-foreground border-sakura/40 hover:border-sakura hover:shadow-[0_0_80px_rgba(244,160,190,0.35)]",
+                    ? "bg-gradient-to-br from-foreground via-purple-900/20 to-foreground border-sakura shadow-[0_0_80px_rgba(244,160,190,0.5)] md:hover:shadow-[0_0_120px_rgba(244,160,190,0.8)]"
+                    : "bg-gradient-to-br from-foreground via-pink-900/20 to-foreground border-sakura/40 md:hover:border-sakura md:hover:shadow-[0_0_80px_rgba(244,160,190,0.35)]",
                 )}
               >
                 {isHighlight && (
@@ -342,8 +428,8 @@ function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) 
                   <button
                     onClick={() => onSelect(p)}
                     className={cn(
-                      "group/btn relative mt-auto inline-flex items-center justify-center gap-3 overflow-hidden border-2 px-6 py-4 text-xs font-semibold uppercase tracking-[0.25em] transition-all duration-300",
-                      "border-sakura bg-sakura text-foreground hover:bg-background hover:text-foreground hover:shadow-[0_0_30px_rgba(244,160,190,0.6)] hover:scale-105",
+                      "group/btn relative mt-auto inline-flex min-h-[52px] items-center justify-center gap-3 overflow-hidden border-2 px-6 py-4 text-xs font-semibold uppercase tracking-[0.25em] transition-all duration-300",
+                      "border-sakura bg-sakura text-foreground hover:bg-background hover:text-foreground md:hover:shadow-[0_0_30px_rgba(244,160,190,0.6)] md:hover:scale-105",
                     )}
                   >
                     <span className="relative z-10">Buy Now</span>
@@ -374,9 +460,10 @@ function ProductsStack({ onSelect }: { onSelect: (p: ProductVariant) => void }) 
 }
 
 function BrandStory() {
+  const isMobile = useIsMobile();
   return (
     <section id="story" className="relative bg-foreground px-6 py-28 text-background md:py-40 md:px-10 overflow-hidden">
-      <Petals density={20} className="opacity-40" />
+      <Petals density={isMobile ? 8 : 20} className="opacity-40" />
       <div className="relative mx-auto max-w-4xl text-center">
         <p className="reveal text-[10px] uppercase tracking-[0.3em] text-sakura">02 — The Studio</p>
         <h2 className="reveal reveal-delay-1 mt-6 font-display text-4xl font-black uppercase leading-tight tracking-tight md:text-6xl">
@@ -404,23 +491,24 @@ function StarRow({ count }: { count: number }) {
 }
 
 function Reviews() {
+  const isMobile = useIsMobile();
   const loop = [...REVIEWS, ...REVIEWS, ...REVIEWS];
   return (
     <section className="border-y border-border bg-background px-6 py-28 md:py-40 md:px-10 overflow-hidden relative">
-      <Petals density={20} className="opacity-40" />
+      <Petals density={isMobile ? 8 : 20} className="opacity-40" />
       <div className="mx-auto max-w-7xl relative z-10">
         <p className="reveal text-[10px] uppercase tracking-[0.3em] text-sakura">Reviews</p>
         <h2 className="reveal reveal-delay-1 mt-4 font-display text-5xl font-black uppercase tracking-tight md:text-6xl">
           Reviews
         </h2>
         <div className="mt-16 relative overflow-hidden">
-          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-background to-transparent" />
-          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-background to-transparent" />
-          <div className="flex w-max animate-marquee gap-8">
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-12 bg-gradient-to-r from-background to-transparent md:w-24" />
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-12 bg-gradient-to-l from-background to-transparent md:w-24" />
+          <div className="flex w-max animate-marquee gap-4 md:gap-8">
             {loop.map((r, i) => (
               <div
                 key={i}
-                className="flex h-40 w-80 shrink-0 flex-col justify-between rounded-xl border border-border bg-background/50 p-5"
+                className="flex h-36 w-64 shrink-0 flex-col justify-between rounded-xl border border-border bg-background/50 p-4 md:h-40 md:w-80 md:p-5"
               >
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted">
@@ -447,6 +535,11 @@ function Reviews() {
         .animate-marquee {
           animation: marquee 30s linear infinite;
         }
+        @media (max-width: 768px) {
+          .animate-marquee {
+            animation: marquee 20s linear infinite;
+          }
+        }
         .animate-marquee:hover {
           animation-play-state: paused;
         }
@@ -457,9 +550,10 @@ function Reviews() {
 
 function Faq() {
   const [open, setOpen] = useState<number | null>(0);
+  const isMobile = useIsMobile();
   return (
     <section id="faq" className="bg-background px-6 py-28 md:py-40 md:px-10 relative overflow-hidden">
-      <Petals density={15} className="opacity-35" />
+      <Petals density={isMobile ? 6 : 15} className="opacity-35" />
       <div className="mx-auto grid max-w-6xl grid-cols-1 gap-16 md:grid-cols-12 relative z-10">
         <div className="md:col-span-4">
           <p className="reveal text-[10px] uppercase tracking-[0.3em] text-sakura">05 — FAQ</p>
@@ -472,14 +566,14 @@ function Faq() {
               <div key={item.q} className="reveal border-b border-border">
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className="flex w-full items-center justify-between gap-6 py-6 text-left transition-colors hover:text-sakura"
+                  className="flex min-h-[60px] w-full items-center justify-between gap-6 py-6 text-left transition-colors hover:text-sakura"
                 >
                   <span className="font-serif text-xl md:text-2xl">{item.q}</span>
                   {isOpen ? <Minus className="h-4 w-4 shrink-0 text-sakura" /> : <Plus className="h-4 w-4 shrink-0" />}
                 </button>
                 <div className="grid overflow-hidden transition-all duration-500" style={{ gridTemplateRows: isOpen ? "1fr" : "0fr" }}>
                   <div className="min-h-0">
-                    <p className="pb-6 pr-10 text-sm leading-relaxed text-muted-foreground">{item.a}</p>
+                    <p className="pb-6 pr-4 text-sm leading-relaxed text-muted-foreground md:pr-10">{item.a}</p>
                   </div>
                 </div>
               </div>
@@ -492,9 +586,10 @@ function Faq() {
 }
 
 function Footer() {
+  const isMobile = useIsMobile();
   return (
     <footer className="relative bg-foreground px-6 py-20 text-background md:px-10 overflow-hidden">
-      <Petals density={18} className="opacity-30" />
+      <Petals density={isMobile ? 8 : 18} className="opacity-30" />
       <div className="relative mx-auto max-w-7xl">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-12">
           <div className="md:col-span-5">
